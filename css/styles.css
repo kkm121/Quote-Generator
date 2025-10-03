@@ -1,1 +1,52 @@
+:root{
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --text: #0b1220;
+  --muted: #6b7280;
+  --accent: #0ea5a0;
+  --shadow: 0 10px 25px rgba(2,6,23,0.06);
+  --radius: 12px;
+}
+
+.dark {
+  --bg: #071024;
+  --card: #071a2a;
+  --text: #e6eef6;
+  --muted: #9aa7b7;
+  --accent: #34d399;
+  --shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+* { box-sizing: border-box; }
+html,body { height:100%; margin:0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(180deg,var(--bg), #e9eef6); color:var(--text); }
+
+.app { max-width:900px; margin:28px auto; background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; }
+
+.top { display:flex; justify-content:space-between; gap:12px; align-items:center; }
+.title h1 { margin:0; font-size:1.2rem; }
+.lead { margin:6px 0 0; color:var(--muted); font-size:0.95rem; }
+
+.actions button { margin-left:8px; padding:8px 10px; border-radius:8px; border:0; cursor:pointer; background:transparent; color:var(--text); }
+.actions button:hover { transform:translateY(-1px); }
+
+.quote-card { margin-top:18px; padding:18px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.01)); }
+.quote-setup { font-weight:600; color:var(--accent); margin-bottom:6px; font-size:1rem; }
+.quote-full { font-size:1.4rem; line-height:1.35; min-height:3.2em; opacity:0; transition: opacity .45s ease, transform .45s ease; transform: translateY(6px); }
+.quote-full.visible { opacity:1; transform: translateY(0); }
+.author { color:var(--muted); font-weight:600; margin-top:8px; }
+
+.controls { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+.controls button { padding:8px 12px; border-radius:8px; border:0; cursor:pointer; background:#111827; color:white; }
+.controls button.secondary { background:transparent; color:var(--text); border:1px solid rgba(0,0,0,0.06); }
+
+.history { margin-top:18px; border-top:1px dashed rgba(0,0,0,0.06); padding-top:12px; color:var(--muted); }
+.history-list { margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+
+.history-item { padding:10px; border-radius:8px; background:rgba(0,0,0,0.02); cursor:pointer; }
+.history-item small { display:block; color:var(--muted); margin-top:6px; font-size:0.85rem; }
+
+@media (max-width:600px){
+  .top { flex-direction:column; align-items:flex-start; }
+  .quote-full { font-size:1.1rem; }
+}
 
