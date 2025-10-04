@@ -4,9 +4,284 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Random Quote Generator</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    :root{
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #0b1220;
+      --muted: #6b7280;
+      --accent: #0ea5a0;
+      --shadow: 0 10px 25px rgba(2,6,23,0.06);
+      --radius: 12px;
+    }
+
+    .dark {
+      --bg: #071024;
+      --card: #071a2a;
+      --text: #e6eef6;
+      --muted: #9aa7b7;
+      --accent: #34d399;
+      --shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    * { box-sizing: border-box; }
+    html,body { 
+      height:100%; 
+      margin:0; 
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; 
+      background: linear-gradient(180deg,var(--bg), #e9eef6); 
+      color:var(--text);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .app { 
+      max-width:900px; 
+      margin:28px auto; 
+      background:var(--card); 
+      border-radius:var(--radius); 
+      box-shadow:var(--shadow); 
+      padding:20px;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .top { display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap: wrap; }
+    .title h1 { margin:0; font-size:1.2rem; }
+    .lead { margin:6px 0 0; color:var(--muted); font-size:0.95rem; }
+
+    .actions button { 
+      margin-left:8px; 
+      padding:8px 12px; 
+      border-radius:8px; 
+      border:0; 
+      cursor:pointer; 
+      background:transparent; 
+      color:var(--text); 
+      transition: transform 0.2s, background 0.2s;
+      font-size: 0.9rem;
+    }
+    .actions button:hover { 
+      transform:translateY(-2px); 
+      background: rgba(0,0,0,0.05);
+    }
+
+    .quote-card { 
+      margin-top:18px; 
+      padding:24px; 
+      border-radius:10px; 
+      background: linear-gradient(135deg, rgba(14, 165, 160, 0.05), rgba(52, 211, 153, 0.05));
+      border: 1px solid rgba(0,0,0,0.03);
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .quote-setup { 
+      font-weight:600; 
+      color:var(--accent); 
+      margin-bottom:12px; 
+      font-size:1.1rem;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .quote-full { 
+      font-size:1.5rem; 
+      line-height:1.5; 
+      min-height:3.2em; 
+      opacity:0; 
+      transition: opacity .6s ease, transform .6s ease;
+      transform: translateY(15px) scale(0.97);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    
+    .quote-full.visible { 
+      opacity:1; 
+      transform: translateY(0) scale(1);
+      animation: fadeIn 0.6s ease forwards;
+    }
+    
+    .author { 
+      color:var(--muted); 
+      font-weight:600; 
+      margin-top:16px; 
+      font-size: 1rem;
+      opacity: 0;
+      animation: slideIn 0.5s ease forwards 0.3s;
+    }
+
+    .controls { 
+      display:flex; 
+      gap:10px; 
+      margin-top:16px; 
+      flex-wrap:wrap; 
+    }
+    
+    .controls button { 
+      padding:10px 18px; 
+      border-radius:8px; 
+      border:0; 
+      cursor:pointer; 
+      background:#111827; 
+      color:white; 
+      transition: all 0.3s;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    
+    .controls button:hover { 
+      background:#1f2937; 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .controls button:active {
+      transform: translateY(0);
+    }
+    
+    .controls button:disabled { 
+      opacity:0.5; 
+      cursor:not-allowed; 
+      transform: none;
+    }
+
+    .controls button.secondary {
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .controls button.secondary:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .history { 
+      margin-top:24px; 
+      border-top:2px dashed rgba(0,0,0,0.08); 
+      padding-top:16px; 
+      color:var(--muted); 
+    }
+    
+    .history h2 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    
+    .history-list { 
+      margin-top:12px; 
+      display:flex; 
+      flex-direction:column; 
+      gap:10px; 
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .history-item { 
+      padding:14px; 
+      border-radius:8px; 
+      background:rgba(0,0,0,0.02); 
+      cursor:pointer; 
+      transition: all 0.3s;
+      border: 1px solid transparent;
+    }
+    
+    .history-item:hover { 
+      background:rgba(14, 165, 160, 0.1); 
+      transform: translateX(4px);
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .history-item strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    
+    .history-item small { 
+      display:block; 
+      color:var(--muted); 
+      font-size:0.85rem; 
+    }
+
+    .no-history { 
+      color:var(--muted); 
+      font-style:italic; 
+      padding:20px; 
+      text-align: center;
+      background: rgba(0,0,0,0.02);
+      border-radius: 8px;
+    }
+
+    .copy-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+      font-weight: 500;
+      z-index: 1000;
+    }
+
+    .copy-notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width:600px){
+      .top { flex-direction:column; align-items:flex-start; }
+      .quote-full { font-size:1.2rem; }
+      .actions { width: 100%; justify-content: flex-start; }
+      .actions button { margin-left: 0; }
+    }
+  </style>
 </head>
 <body>
+  <div class="copy-notification" id="copyNotification">✓ Quote copied to clipboard!</div>
+  
   <div class="app" id="app">
     <header class="top">
       <div class="title">
@@ -40,8 +315,279 @@
     </main>
   </div>
 
-  <!-- module entrypoint -->
-  <script type="module" src="js/main.js"></script>
+  <script>
+    // Built-in quote database (50 inspirational quotes)
+    const QUOTES = [
+      { content: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+      { content: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
+      { content: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
+      { content: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+      { content: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
+      { content: "Be yourself; everyone else is already taken.", author: "Oscar Wilde" },
+      { content: "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.", author: "Albert Einstein" },
+      { content: "In three words I can sum up everything I've learned about life: it goes on.", author: "Robert Frost" },
+      { content: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+      { content: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+      { content: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+      { content: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+      { content: "Don't let yesterday take up too much of today.", author: "Will Rogers" },
+      { content: "You learn more from failure than from success. Don't let it stop you. Failure builds character.", author: "Unknown" },
+      { content: "If you are working on something that you really care about, you don't have to be pushed. The vision pulls you.", author: "Steve Jobs" },
+      { content: "People who are crazy enough to think they can change the world, are the ones who do.", author: "Rob Siltanen" },
+      { content: "We generate fears while we sit. We overcome them by action.", author: "Dr. Henry Link" },
+      { content: "Whether you think you can or you think you can't, you're right.", author: "Henry Ford" },
+      { content: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+      { content: "I have not failed. I've just found 10,000 ways that won't work.", author: "Thomas Edison" },
+      { content: "A person who never made a mistake never tried anything new.", author: "Albert Einstein" },
+      { content: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+      { content: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs" },
+      { content: "If life were predictable it would cease to be life, and be without flavor.", author: "Eleanor Roosevelt" },
+      { content: "The only way out of the labyrinth of suffering is to forgive.", author: "John Green" },
+      { content: "Do not go where the path may lead, go instead where there is no path and leave a trail.", author: "Ralph Waldo Emerson" },
+      { content: "It is never too late to be what you might have been.", author: "George Eliot" },
+      { content: "Everything you've ever wanted is on the other side of fear.", author: "George Addair" },
+      { content: "Success is not how high you have climbed, but how you make a positive difference to the world.", author: "Roy T. Bennett" },
+      { content: "What we think, we become.", author: "Buddha" },
+      { content: "Happiness is not something ready made. It comes from your own actions.", author: "Dalai Lama" },
+      { content: "The best revenge is massive success.", author: "Frank Sinatra" },
+      { content: "Life is 10% what happens to you and 90% how you react to it.", author: "Charles R. Swindoll" },
+      { content: "Change your thoughts and you change your world.", author: "Norman Vincent Peale" },
+      { content: "The mind is everything. What you think you become.", author: "Buddha" },
+      { content: "The best and most beautiful things in the world cannot be seen or even touched - they must be felt with the heart.", author: "Helen Keller" },
+      { content: "Whoever is happy will make others happy too.", author: "Anne Frank" },
+      { content: "Do not wait to strike till the iron is hot; but make it hot by striking.", author: "William Butler Yeats" },
+      { content: "Great minds discuss ideas; average minds discuss events; small minds discuss people.", author: "Eleanor Roosevelt" },
+      { content: "I alone cannot change the world, but I can cast a stone across the water to create many ripples.", author: "Mother Teresa" },
+      { content: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" },
+      { content: "You must be the change you wish to see in the world.", author: "Mahatma Gandhi" },
+      { content: "Spread love everywhere you go. Let no one ever come to you without leaving happier.", author: "Mother Teresa" },
+      { content: "The only thing we have to fear is fear itself.", author: "Franklin D. Roosevelt" },
+      { content: "Darkness cannot drive out darkness: only light can do that. Hate cannot drive out hate: only love can do that.", author: "Martin Luther King Jr." },
+      { content: "Do one thing every day that scares you.", author: "Eleanor Roosevelt" },
+      { content: "Well done is better than well said.", author: "Benjamin Franklin" },
+      { content: "The best preparation for tomorrow is doing your best today.", author: "H. Jackson Brown Jr." },
+      { content: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky" },
+      { content: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela" }
+    ];
+
+    // In-memory storage (works in Claude.ai artifacts)
+    let historyStore = [];
+    let darkMode = false;
+    let currentQuote = null;
+    let usedIndices = [];
+
+    const MAX_ITEMS = 50;
+
+    // DOM references
+    const setupEl = document.getElementById('quoteSetup');
+    const fullEl = document.getElementById('quoteFull');
+    const authorEl = document.getElementById('author');
+    const histList = document.getElementById('historyList');
+    const newBtn = document.getElementById('newQuote');
+    const saveBtn = document.getElementById('saveBtn');
+    const clearBtn = document.getElementById('clearHist');
+    const copyBtn = document.getElementById('copyBtn');
+    const darkBtn = document.getElementById('darkToggle');
+    const copyNotification = document.getElementById('copyNotification');
+
+    // Get random quote from built-in database
+    function getRandomQuote() {
+      // Reset used indices if we've gone through all quotes
+      if (usedIndices.length >= QUOTES.length) {
+        usedIndices = [];
+      }
+
+      let index;
+      do {
+        index = Math.floor(Math.random() * QUOTES.length);
+      } while (usedIndices.includes(index));
+
+      usedIndices.push(index);
+      
+      const quote = QUOTES[index];
+      return {
+        id: String(Date.now()),
+        content: quote.content,
+        author: quote.author
+      };
+    }
+
+    // History Functions
+    function pushHistory(item) {
+      if (historyStore.length && historyStore[0].content === item.content) return;
+      historyStore.unshift({ ...item, savedAt: Date.now() });
+      if (historyStore.length > MAX_ITEMS) {
+        historyStore = historyStore.slice(0, MAX_ITEMS);
+      }
+    }
+
+    function clearHistoryStore() {
+      historyStore = [];
+    }
+
+    // UI Functions with animations
+    function showSetupThenReveal(q, opts = {}) {
+      const previewLen = opts.previewLen ?? 40;
+      const revealDelay = opts.revealDelay ?? 1500;
+
+      // Show setup (author or first part of quote)
+      const preview = q.author && q.content.length > previewLen 
+        ? `${q.author} once said...` 
+        : (q.content.length > previewLen ? q.content.slice(0, previewLen) + '…' : q.content);
+      
+      setupEl.textContent = preview;
+      setupEl.style.opacity = '0';
+      setupEl.style.animation = 'none';
+      
+      // Trigger reflow
+      setupEl.offsetHeight;
+      setupEl.style.animation = 'fadeInUp 0.6s ease forwards';
+
+      // Prepare full quote (hidden)
+      fullEl.classList.remove('visible');
+      fullEl.textContent = q.content;
+      currentQuote = q;
+
+      // Show author
+      authorEl.textContent = `— ${q.author || 'Unknown'}`;
+      authorEl.style.opacity = '0';
+      authorEl.style.animation = 'none';
+
+      // Reveal full quote after delay with animation
+      setTimeout(() => {
+        fullEl.classList.add('visible');
+        authorEl.offsetHeight;
+        authorEl.style.animation = 'slideIn 0.5s ease forwards 0.3s';
+      }, revealDelay);
+    }
+
+    function renderHistory() {
+      histList.innerHTML = '';
+      if (!historyStore.length) {
+        histList.innerHTML = '<div class="no-history">No saved quotes yet. Click "Save to History" to start collecting!</div>';
+        return;
+      }
+
+      historyStore.forEach(item => {
+        const node = document.createElement('div');
+        node.className = 'history-item';
+        node.innerHTML = `<strong>${escapeHtml(shorten(item.content, 100))}</strong>
+                          <small>${escapeHtml(item.author || 'Unknown')} · ${new Date(item.savedAt).toLocaleString()}</small>`;
+        node.addEventListener('click', () => {
+          showSetupThenReveal({ content: item.content, author: item.author }, { revealDelay: 800 });
+          // Scroll to top smoothly
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        histList.appendChild(node);
+      });
+    }
+
+    function setLoading(is) {
+      newBtn.disabled = is;
+      newBtn.textContent = is ? '⏳ Loading…' : '✨ New Quote';
+      if (is) {
+        setupEl.textContent = 'Fetching an inspiring quote...';
+        fullEl.classList.remove('visible');
+        authorEl.textContent = '';
+      }
+    }
+
+    function loadAndShow() {
+      setLoading(true);
+      
+      // Simulate API delay for better UX
+      setTimeout(() => {
+        try {
+          const q = getRandomQuote();
+          showSetupThenReveal(q);
+        } catch (e) {
+          setupEl.textContent = 'Could not load quote. Please try again.';
+          console.error(e);
+        } finally {
+          setLoading(false);
+        }
+      }, 400);
+    }
+
+    function saveCurrentToHistory() {
+      if (currentQuote) {
+        pushHistory(currentQuote);
+        renderHistory();
+        
+        // Visual feedback
+        saveBtn.textContent = '✓ Saved!';
+        saveBtn.style.background = '#10b981';
+        saveBtn.style.color = 'white';
+        setTimeout(() => {
+          saveBtn.textContent = '💾 Save to History';
+          saveBtn.style.background = '';
+          saveBtn.style.color = '';
+        }, 1200);
+      }
+    }
+
+    function clearHistoryUI() {
+      clearHistoryStore();
+      renderHistory();
+    }
+
+    async function copyCurrentToClipboard() {
+      if (!currentQuote) throw new Error('No current quote to copy');
+      const text = `"${currentQuote.content}" — ${currentQuote.author || 'Unknown'}`;
+      await navigator.clipboard.writeText(text);
+      
+      // Show notification
+      copyNotification.classList.add('show');
+      setTimeout(() => {
+        copyNotification.classList.remove('show');
+      }, 2500);
+    }
+
+    function toggleDark() {
+      darkMode = !darkMode;
+      document.documentElement.classList.toggle('dark', darkMode);
+      darkBtn.setAttribute('aria-pressed', darkMode ? 'true' : 'false');
+      darkBtn.textContent = darkMode ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+
+    // Helpers
+    function shorten(s, n) {
+      return (s.length > n) ? s.slice(0, n) + '…' : s;
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
+      );
+    }
+
+    // Event Listeners
+    newBtn.addEventListener('click', loadAndShow);
+
+    saveBtn.addEventListener('click', saveCurrentToHistory);
+
+    clearBtn.addEventListener('click', () => {
+      if (confirm('Clear all saved quotes? This cannot be undone.')) {
+        clearHistoryUI();
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await copyCurrentToClipboard();
+        copyBtn.textContent = '✓ Copied!';
+        setTimeout(() => copyBtn.textContent = '📋 Copy', 1500);
+      } catch (err) {
+        alert('Unable to copy to clipboard. Please try again.');
+        console.error(err);
+      }
+    });
+
+    darkBtn.addEventListener('click', toggleDark);
+
+    // Initialize app
+    renderHistory();
+    loadAndShow();
+  </script>
 </body>
 </html>
-
