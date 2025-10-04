@@ -11,30 +11,30 @@
     <header class="top">
       <div class="title">
         <h1 id="appTitle">Random Quote Generator</h1>
-        <p class="lead">Shows a short setup first, then reveals the full quote.</p>
+        <p class="lead">Discover inspiring quotes with beautiful reveal animations</p>
       </div>
 
       <div class="actions" role="toolbar" aria-label="Application actions">
-        <button id="darkToggle" aria-pressed="false">Dark</button>
-        <button id="copyBtn" title="Copy quote">Copy</button>
+        <button id="darkToggle" aria-pressed="false" title="Toggle dark mode">🌙 Dark Mode</button>
+        <button id="copyBtn" title="Copy quote to clipboard">📋 Copy</button>
       </div>
     </header>
 
     <main>
       <section aria-labelledby="quote-heading" class="quote-card" id="quoteCard">
-        <div class="quote-setup" id="quoteSetup" aria-hidden="false">Loading…</div>
+        <div class="quote-setup" id="quoteSetup" aria-hidden="false">Loading your first quote...</div>
         <div id="quoteFull" class="quote-full" aria-live="polite"></div>
         <div class="author" id="author"></div>
       </section>
 
       <nav class="controls" aria-label="Quote controls">
-        <button id="newQuote">New Quote</button>
-        <button id="saveBtn">Save to History</button>
-        <button id="clearHist">Clear History</button>
+        <button id="newQuote">✨ New Quote</button>
+        <button id="saveBtn" class="secondary">💾 Save to History</button>
+        <button id="clearHist" class="secondary">🗑️ Clear History</button>
       </nav>
 
       <section class="history" aria-labelledby="history-heading">
-        <h2 id="history-heading">History</h2>
+        <h2 id="history-heading">📜 Quote History</h2>
         <div id="historyList" class="history-list"></div>
       </section>
     </main>
