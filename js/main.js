@@ -12,9 +12,9 @@ const darkBtn = document.getElementById('darkToggle');
 
 function setLoading(is) {
   newBtn.disabled = is;
-  newBtn.textContent = is ? 'Loading…' : 'New Quote';
+  newBtn.textContent = is ? '⏳ Loading…' : '✨ New Quote';
   if (is) {
-    document.getElementById('quoteSetup').textContent = 'Fetching…';
+    document.getElementById('quoteSetup').textContent = 'Fetching an inspiring quote...';
     document.getElementById('quoteFull').classList.remove('visible');
     document.getElementById('author').textContent = '';
   }
@@ -26,7 +26,7 @@ async function loadAndShow() {
     const q = await fetchRandomQuote();
     showSetupThenReveal(q);
   } catch (e) {
-    document.getElementById('quoteSetup').textContent = 'Could not load quote.';
+    document.getElementById('quoteSetup').textContent = 'Could not load quote. Please try again.';
     console.error(e);
   } finally {
     setLoading(false);
@@ -35,23 +35,36 @@ async function loadAndShow() {
 
 /* Event wiring */
 newBtn.addEventListener('click', loadAndShow);
+
 saveBtn.addEventListener('click', () => {
   saveCurrentToHistory();
-  saveBtn.textContent = 'Saved!';
-  setTimeout(()=> saveBtn.textContent = 'Save to History', 900);
+  saveBtn.textContent = '✓ Saved!';
+  saveBtn.style.background = '#10b981';
+  saveBtn.style.color = 'white';
+  setTimeout(() => {
+    saveBtn.textContent = '💾 Save to History';
+    saveBtn.style.background = '';
+    saveBtn.style.color = '';
+  }, 1200);
 });
+
 clearBtn.addEventListener('click', () => {
-  if (confirm('Clear saved quotes?')) clearHistoryUI();
+  if (confirm('Clear all saved quotes? This cannot be undone.')) {
+    clearHistoryUI();
+  }
 });
+
 copyBtn.addEventListener('click', async () => {
   try {
     await copyCurrentToClipboard();
-    copyBtn.textContent = 'Copied!';
-    setTimeout(()=> copyBtn.textContent = 'Copy', 1000);
-  } catch {
-    alert('Unable to copy on this device.');
+    copyBtn.textContent = '✓ Copied!';
+    setTimeout(() => copyBtn.textContent = '📋 Copy', 1500);
+  } catch (err) {
+    alert('Unable to copy to clipboard. Please try again.');
+    console.error(err);
   }
 });
+
 darkBtn.addEventListener('click', toggleDark);
 
 /* Initial boot */
