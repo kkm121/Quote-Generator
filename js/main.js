@@ -1,73 +1,46 @@
-// js/main.js
-// app bootstrap: wire up events and start the first fetch
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Random Quote Generator</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="top">
+      <div class="title">
+        <h1 id="appTitle">Random Quote Generator</h1>
+        <p class="lead">Discover inspiring quotes with beautiful reveal animations</p>
+      </div>
 
-import { fetchRandomQuote } from './api.js';
-import { renderHistory, showSetupThenReveal, saveCurrentToHistory, clearHistoryUI, copyCurrentToClipboard, applyDarkFromStorage, toggleDark } from './ui.js';
+      <div class="actions" role="toolbar" aria-label="Application actions">
+        <button id="darkToggle" aria-pressed="false" title="Toggle dark mode">🌙 Dark Mode</button>
+        <button id="copyBtn" title="Copy quote to clipboard">📋 Copy</button>
+      </div>
+    </header>
 
-const newBtn = document.getElementById('newQuote');
-const saveBtn = document.getElementById('saveBtn');
-const clearBtn = document.getElementById('clearHist');
-const copyBtn = document.getElementById('copyBtn');
-const darkBtn = document.getElementById('darkToggle');
+    <main>
+      <section aria-labelledby="quote-heading" class="quote-card" id="quoteCard">
+        <div class="quote-setup" id="quoteSetup" aria-hidden="false">Loading your first quote...</div>
+        <div id="quoteFull" class="quote-full" aria-live="polite"></div>
+        <div class="author" id="author"></div>
+      </section>
 
-function setLoading(is) {
-  newBtn.disabled = is;
-  newBtn.textContent = is ? '⏳ Loading…' : '✨ New Quote';
-  if (is) {
-    document.getElementById('quoteSetup').textContent = 'Fetching an inspiring quote...';
-    document.getElementById('quoteFull').classList.remove('visible');
-    document.getElementById('author').textContent = '';
-  }
-}
+      <nav class="controls" aria-label="Quote controls">
+        <button id="newQuote">✨ New Quote</button>
+        <button id="saveBtn" class="secondary">💾 Save to History</button>
+        <button id="clearHist" class="secondary">🗑️ Clear History</button>
+      </nav>
 
-async function loadAndShow() {
-  setLoading(true);
-  try {
-    const q = await fetchRandomQuote();
-    showSetupThenReveal(q);
-  } catch (e) {
-    document.getElementById('quoteSetup').textContent = 'Could not load quote. Please try again.';
-    console.error(e);
-  } finally {
-    setLoading(false);
-  }
-}
+      <section class="history" aria-labelledby="history-heading">
+        <h2 id="history-heading">📜 Quote History</h2>
+        <div id="historyList" class="history-list"></div>
+      </section>
+    </main>
+  </div>
 
-/* Event wiring */
-newBtn.addEventListener('click', loadAndShow);
-
-saveBtn.addEventListener('click', () => {
-  saveCurrentToHistory();
-  saveBtn.textContent = '✓ Saved!';
-  saveBtn.style.background = '#10b981';
-  saveBtn.style.color = 'white';
-  setTimeout(() => {
-    saveBtn.textContent = '💾 Save to History';
-    saveBtn.style.background = '';
-    saveBtn.style.color = '';
-  }, 1200);
-});
-
-clearBtn.addEventListener('click', () => {
-  if (confirm('Clear all saved quotes? This cannot be undone.')) {
-    clearHistoryUI();
-  }
-});
-
-copyBtn.addEventListener('click', async () => {
-  try {
-    await copyCurrentToClipboard();
-    copyBtn.textContent = '✓ Copied!';
-    setTimeout(() => copyBtn.textContent = '📋 Copy', 1500);
-  } catch (err) {
-    alert('Unable to copy to clipboard. Please try again.');
-    console.error(err);
-  }
-});
-
-darkBtn.addEventListener('click', toggleDark);
-
-/* Initial boot */
-applyDarkFromStorage();
-renderHistory();
-loadAndShow();
+  <!-- module entrypoint -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
